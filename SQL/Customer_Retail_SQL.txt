@@ -1,0 +1,339 @@
+Create a Database:
+	create database retail;
+
+Connect to Database:
+	use retail;
+
+Create a tables salespeople, customer, and orders :
+
+	CREATE TABLE salespeople (
+		snum    INT  NOT NULL,
+         	sname VARCHAR(30)   NOT NULL,
+         	city  VARCHAR(30)   NOT NULL,
+         	comm  DECIMAL(4,2)  NOT NULL,
+         	PRIMARY KEY  (snum)
+	);
+
+	CREATE TABLE customer (
+         	cnum    INT  NOT NULL,
+         	cname VARCHAR(30)   NOT NULL,
+         	city  VARCHAR(30)   NOT NULL,
+         	rating int not null,
+         	snum  int  NOT NULL,
+         	PRIMARY KEY  (cnum),
+     	 	FOREIGN KEY (snum) REFERENCES salespeople(snum)
+	);
+
+	CREATE TABLE orders ( 
+         	onum    INT  NOT NULL, 
+    		amt  DECIMAL(7,2)  NOT NULL, 
+         	odate  Date   NOT NULL, 
+ 		cnum  int  NOT NULL, 
+         	PRIMARY KEY  (onum), 
+     		FOREIGN KEY (cnum) REFERENCES customer(cnum) 
+       ); 
+
+Insert Values into tables:
+
+	INSERT INTO salespeople VALUES (1001, 'Peel', 'London', 0.12);
+	INSERT INTO salespeople VALUES (1002, 'Serres', 'San Jose', .13);
+	INSERT INTO salespeople VALUES (1004,'Motika', 'London', .11);
+	INSERT INTO salespeople VALUES (1007,'Rifkin', 'Barcelona', .15);
+	INSERT INTO salespeople VALUES (1003,'AxelRod', 'New York', .10);
+	INSERT INTO salespeople VALUES (1005,'Fran', 'London', .26);
+
+
+	INSERT INTO customer VALUES (2001, 'Hoffman', 'London',100, 1001);
+	INSERT INTO customer VALUES (2002,'Giovanni', 'Rome', 200, 1003);
+	INSERT INTO customer VALUES (2003,'Liu','San Jose',200,1002);
+	INSERT INTO customer VALUES (2004,'Grass', 'Berlin', 300,1002);
+	INSERT INTO customer VALUES (2006,'Clemens', 'London', 100, 1001);
+	INSERT INTO customer VALUES(2008,'Cisneros','San Jose',300, 1007);
+	INSERT INTO customer VALUES (2007,'Pereira', 'Rome', 100 ,1004);
+
+
+	INSERT INTO orders VALUES (3001, 18.69, '1996-03-10', 2008);
+	INSERT INTO orders VALUES (3003, 767.19, '1996-10-03', 2001);  
+	INSERT INTO orders VALUES (3002, 1900.10, '1996-10-03', 2007);  
+	INSERT INTO orders VALUES (3005, 5160.45, '1996-10-03', 2003);  
+	INSERT INTO orders VALUES (3006, 1098.16, '1996-10-03', 2008);  
+	INSERT INTO orders VALUES (3009, 1713.23, '1996-10-04', 2002);  
+	INSERT INTO orders VALUES (3007, 75.75, '1996-10-04', 2002);  
+	INSERT INTO orders VALUES (3008, 4723.00, '1996-10-05', 2006);  
+	INSERT INTO orders VALUES (3010, 1309.95, '1996-10-06', 2004);  
+	INSERT INTO orders VALUES (3011, 9891.88, '1996-10-06', 2006); 
+
+
+
+	mysql> select *from salespeople;
+	+------+---------+-----------+------+
+	| snum | sname   | city      | comm |
+	+------+---------+-----------+------+
+	| 1001 | Peel    | London    | 0.12 |
+	| 1002 | Serres  | San Jose  | 0.13 |
+	| 1003 | AxelRod | New York  | 0.10 |
+	| 1004 | Motika  | London    | 0.11 |
+	| 1005 | Fran    | London    | 0.26 |
+	| 1007 | Rifkin  | Barcelona | 0.15 |
+	+------+---------+-----------+------+
+	6 rows in set (0.00 sec)
+
+	mysql> select *from customer;
+	+------+----------+----------+--------+------+
+	| cnum | cname    | city     | rating | snum |
+	+------+----------+----------+--------+------+
+	| 2001 | Hoffman  | London   |    100 | 1001 |
+	| 2002 | Giovanni | Rome     |    200 | 1003 |
+	| 2003 | Liu      | San Jose |    200 | 1002 |
+	| 2004 | Grass    | Berlin   |    300 | 1002 |
+	| 2006 | Clemens  | London   |    100 | 1001 |
+	| 2007 | Pereira  | Rome     |    100 | 1004 |
+	| 2008 | Cisneros | San Jose |    300 | 1007 |
+	+------+----------+----------+--------+------+
+	7 rows in set (0.00 sec)
+
+	mysql> select *from orders;
+	+------+---------+------------+------+
+	| onum | amt     | odate      | cnum |
+	+------+---------+------------+------+
+	| 3001 |   18.69 | 1996-03-10 | 2008 |
+	| 3002 | 1900.10 | 1996-10-03 | 2007 |
+	| 3003 |  767.19 | 1996-10-03 | 2001 |
+	| 3005 | 5160.45 | 1996-10-03 | 2003 |
+	| 3006 | 1098.16 | 1996-10-03 | 2008 |
+	| 3007 |   75.75 | 1996-10-04 | 2002 |
+	| 3008 | 4723.00 | 1996-10-05 | 2006 |
+	| 3009 | 1713.23 | 1996-10-04 | 2002 |
+	| 3010 | 1309.95 | 1996-10-06 | 2004 |
+	| 3011 | 9891.88 | 1996-10-06 | 2006 |
+	+------+---------+------------+------+
+	10 rows in set (0.00 sec)
+
+Queries:
+
+20/12/2024
+
+1. Find number of customers for each salespeople
+	
+	mysql> select s.snum,count(c.cnum) from salespeople s join customer c on c.snum = s.snum group by s.snum;
+	+------+---------------+
+	| snum | count(c.cnum) |
+	+------+---------------+
+	| 1001 |             2 |
+	| 1002 |             2 |
+	| 1003 |             1 |
+	| 1004 |             1 |
+	| 1007 |             1 |
+	+------+---------------+
+	5 rows in set (0.00 sec)
+
+2. Best Salesperson based on customer rating
+	
+	mysql> select s.snum,s.sname,avg(c.rating) as avg_rating from salespeople s join customer c on c.snum = s.snum group by s.snum order by avg_rating desc limit 1;
+	+------+--------+------------+
+	| snum | sname  | avg_rating |
+	+------+--------+------------+
+	| 1007 | Rifkin |   300.0000 |
+	+------+--------+------------+
+	1 row in set (0.00 sec)
+
+3. To whom we need to fire from salespeople team.
+	
+	mysql> select s.snum,s.sname,avg(c.rating) as avg_rating from salespeople s join customer c on c.snum = s.snum group by s.snum order by avg_rating asc limit 1;
+	+------+--------+------------+
+	| snum | sname  | avg_rating |
+	+------+--------+------------+
+	| 1004 | Motika |   100.0000 |
+	+------+--------+------------+
+	1 row in set (0.00 sec)
+
+4. Who has less customer rating.
+	
+	mysql> select s.snum,s.sname,avg(c.rating) as avg_rating from salespeople s join customer c on c.snum = s.snum group by s.snum order by avg_rating asc limit 1;
+	+------+--------+------------+
+	| snum | sname  | avg_rating |
+	+------+--------+------------+
+	| 1004 | Motika |   100.0000 |
+	+------+--------+------------+
+	1 row in set (0.00 sec)
+
+5. Display salespeople who has customers from same city.
+	
+	mysql> select s.snum,s.sname,s.city,c.cnum,c.cname,c.city from salespeople s join customer c on c.city = s.city group by s.snum,s.sname order by s.snum asc;
+	+------+--------+----------+------+---------+----------+
+	| snum | sname  | city     | cnum | cname   | city     |
+	+------+--------+----------+------+---------+----------+
+	| 1001 | Peel   | London   | 2001 | Hoffman | London   |
+	| 1002 | Serres | San Jose | 2003 | Liu     | San Jose |
+	| 1004 | Motika | London   | 2001 | Hoffman | London   |
+	| 1005 | Fran   | London   | 2001 | Hoffman | London   |
+	+------+--------+----------+------+---------+----------+
+	4 rows in set (0.00 sec)
+
+6. Find the names and numbers of all salespeople who had more than one customer.
+	
+	mysql> select s.snum,s.sname,count(c.snum) as customer_count from salespeople s join customer c on c.snum = s.snum group by s.snum having count(c.snum) > 1 order by customer_count desc;
+	+------+--------+----------------+
+	| snum | sname  | customer_count |
+	+------+--------+----------------+
+	| 1001 | Peel   |              2 |
+	| 1002 | Serres |              2 |
+	+------+--------+----------------+
+	2 rows in set (0.00 sec)
+
+7. Find customers in San Jose who have a rating above 200.
+	
+	mysql> select c.cnum,c.cname,c.city,avg(c.rating) as avg_rating from customer c where city = 'San Jose' group by c.cnum,c.cname having avg(c.rating) > 200;
+	+------+----------+----------+------------+
+	| cnum | cname    | city     | avg_rating |
+	+------+----------+----------+------------+
+	| 2008 | Cisneros | San Jose |   300.0000 |
+	+------+----------+----------+------------+
+	1 row in set (0.00 sec)
+
+8. List all customers with ratings above San Jose’s average.  
+	
+	mysql> select c.cnum,c.cname,c.city,c.rating from customer c where c.rating > (select avg(c1.rating) from customer c1 where c1.city = 'San Jose');
+	+------+----------+----------+--------+
+	| cnum | cname    | city     | rating |
+	+------+----------+----------+--------+
+	| 2004 | Grass    | Berlin   |    300 |
+	| 2008 | Cisneros | San Jose |    300 |
+	+------+----------+----------+--------+
+	2 rows in set (0.00 sec)
+
+
+
+
+
+21/12/2024
+
+1. Identify which salesperson has generated the highest total sales.
+	
+	mysql> select s.sname, sum(o.amt) as total_sales from salespeople s join customer c on s.snum = c.snum join orders o on c.cnum = o.cnum group by s.snum order by total_sales desc limit 1;
+	+-------+-------------+
+	| sname | total_sales |
+	+-------+-------------+
+	| Peel  |    15382.07 |
+	+-------+-------------+
+	1 row in set (0.00 sec)
+
+2. Count how many customers are handled by each salesperson.
+	
+	mysql> select s.sname, count(c.cnum) as num_customers from salespeople s join customer c on s.snum = c.snum group by s.snum;
+	+---------+---------------+
+	| sname   | num_customers |
+	+---------+---------------+
+	| Peel    |             2 |
+	| Serres  |             2 |
+	| AxelRod |             1 |
+	| Motika  |             1 |
+	| Rifkin  |             1 |
+	+---------+---------------+
+	5 rows in set (0.00 sec)
+
+3. Find out which customers have placed the most orders.
+	
+	mysql> select c.cname, count(o.onum) as num_orders from customer c join orders o on c.cnum = o.cnum group by c.cnum order by num_orders desc limit 1;
+	+---------+------------+
+	| cname   | num_orders |
+	+---------+------------+
+	| Clemens |          2 |
+	+---------+------------+
+	1 row in set (0.00 sec)
+
+4. Analyze the average size of orders for each salesperson's customers.
+	
+	mysql> select s.sname, avg(o.amt) as avg_order_size from salespeople s join customer c on s.snum = c.snum join orders o on c.cnum = o.cnum group by s.snum;
+	+---------+----------------+
+	| sname   | avg_order_size |
+	+---------+----------------+
+	| Peel    |    5127.356667 |
+	| Serres  |    3235.200000 |
+	| AxelRod |     894.490000 |
+	| Motika  |    1900.100000 |
+	| Rifkin  |     558.425000 |
+	+---------+----------------+
+	5 rows in set (0.00 sec)
+	
+5. Identify the customers who have spent the most money on orders.
+	
+	mysql> select c.cname, sum(o.amt) as total_spent from customer c join orders o on c.cnum = o.cnum group by c.cnum order by total_spent desc limit 1;
+	+---------+-------------+
+	| cname   | total_spent |
+	+---------+-------------+
+	| Clemens |    14614.88 |
+	+---------+-------------+
+	1 row in set (0.00 sec)
+
+6. Analyze which cities (regions) generate the highest total sales.
+	
+	mysql> select c.city, sum(o.amt) as total_sales from customer c join orders o on c.cnum = o.cnum group by c.city order by total_sales desc;
+	+----------+-------------+
+	| city     | total_sales |
+	+----------+-------------+
+	| London   |    15382.07 |
+	| San Jose |     6277.30 |
+	| Rome     |     3689.08 |
+	| Berlin   |     1309.95 |
+	+----------+-------------+
+	4 rows in set (0.00 sec)
+
+7. Find out which salesperson has the highest average customer rating.
+	
+	mysql> select s.sname, avg(c.rating) as avg_rating from salespeople s join customer c on s.snum = c.snum group by s.snum order by avg_rating desc limit 1;
+	+--------+------------+
+	| sname  | avg_rating |
+	+--------+------------+
+	| Rifkin |   300.0000 |
+	+--------+------------+
+	1 row in set (0.00 sec)
+
+8. Calculate the percentage of customers who have placed orders for each salesperson.
+	
+	mysql> select s.sname,(count(distinct case when o.onum is not null then c.cnum end) / count(distinct c.cnum)) * 100 as percentage_customers_with_orders from salespeople s join customer c on s.snum = c.snum left join orders o on c.cnum = o.cnum group by s.snum;
+	+---------+----------------------------------+
+	| sname   | percentage_customers_with_orders |
+	+---------+----------------------------------+
+	| Peel    |                         100.0000 |
+	| Serres  |                         100.0000 |
+	| AxelRod |                         100.0000 |
+	| Motika  |                         100.0000 |
+	| Rifkin  |                         100.0000 |
+	+---------+----------------------------------+
+	5 rows in set (0.00 sec)
+
+9. Calculate the total revenue generated by each customer.
+	
+	mysql> select c.cname, sum(o.amt) as total_revenue from customer c join orders o on c.cnum = o.cnum group by c.cnum;
+	+----------+---------------+
+	| cname    | total_revenue |
+	+----------+---------------+
+	| Hoffman  |        767.19 |
+	| Giovanni |       1788.98 |
+	| Liu      |       5160.45 |
+	| Grass    |       1309.95 |
+	| Clemens  |      14614.88 |
+	| Pereira  |       1900.10 |
+	| Cisneros |       1116.85 |
+	+----------+---------------+
+	7 rows in set (0.00 sec)
+	
+10. Identify customers who have not placed any orders.
+	
+	mysql> select c.cname from customer c left join orders o on c.cnum = o.cnum where o.onum is null;
+	Empty set (0.00 sec)
+
+11. Show the percentage of total revenue generated by each salesperson.
+	
+	mysql> select s.sname, (sum(o.amt) / (select sum(amt) from orders)) * 100 as percentage_revenue from salespeople s join customer c on s.snum = c.snum join orders o on c.cnum = o.cnum group by s.snum;
+	+---------+--------------------+
+	| sname   | percentage_revenue |
+	+---------+--------------------+
+	| Peel    |          57.700650 |
+	| Serres  |          24.271524 |
+	| AxelRod |           6.710755 |
+	| Motika  |           7.127585 |
+	| Rifkin  |           4.189486 |
+	+---------+--------------------+
+	5 rows in set (0.00 sec)
